@@ -1,17 +1,7 @@
 import React from 'react'
+import ShelfPicker from './ShelfPicker'
 
-const Book = ({ book, shelves }) => {
-
-	const shelfList = shelves.map( (shelf, i) => {
-		const isSelected = shelf.value === book.shelf ? '✓ ' : ''
-		return(
-			<option
-				key={i}
-				value={shelf.value}
-			>{isSelected}{shelf.name}</option>
-		)
-	})
-
+const Book = ({ book, shelves, onShelfChange}) => {
 	return (
 		<div className="book">
 			<div className='book-top'>
@@ -22,12 +12,11 @@ const Book = ({ book, shelves }) => {
 						backgroundImage: `url(${book.imageLinks.thumbnail})`
 					}}
 				></div>
-				<div className="book-shelf-changer">
-					<select>
-						<option value="move" disabled>Move to...</option>
-						{shelfList}
-					</select>
-				</div>
+				<ShelfPicker
+					book={book}
+					shelves={shelves}
+					onShelfChange={onShelfChange}
+				/>
 			</div>
 			<div className='book-title'>{book.title}</div>
 			<div className='book-authors'>

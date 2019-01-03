@@ -24,14 +24,13 @@ class BooksApp extends React.Component {
 		})
 	}
 
-	sortBooks = (shelves, books) => {
-	}
-
-	changeShelf = (book, shelf) => {
-		BooksAPI.update(book, shelf)
-		.then( shelves => {
-			console.log(shelves)
-		})
+	changeShelf = (selectedBook, newShelf) => {
+		this.setState((prevState) => ({
+			books: prevState.books.map( book => book.id === selectedBook.id 
+				? ({...book, shelf: newShelf})
+				: book)
+		}))
+		BooksAPI.update(selectedBook, newShelf)
 	}
 
 	componentDidMount() {
@@ -47,17 +46,15 @@ class BooksApp extends React.Component {
 						<div className='list-books-title'>
 							<h1>MyReads</h1>
 						</div>
-						<ShelfList books={books} shelves={shelves} />
+						<ShelfList books={books} shelves={shelves} onShelfChange={this.changeShelf}/>
 						<div className="open-search">
 							<Link
 								to='/search'
 							><button>Add a book</button></Link>
 						</div>
-						<button onClick={() => this.changeShelf(books[1], shelves[0].value)}>clickMe</button>
-						<button onClick={() => this.getBooks()}>update</button>
 					</div>
 				)} />
-				<Route path='/search' render={() => (<SearchBooks books={books} shelves={shelves}/>)}/>
+				<Route path='/search' render={() => (<SearchBooks books={books} shelves={shelves} onShelfChange={this.changeShelf} />)}/>
       </div>
     )
   }
