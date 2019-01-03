@@ -3,12 +3,12 @@ import Shelf from './Shelf'
 
 const ShelfList = ({ books, shelves }) => {
 	const filterBooks = (shelf, books) => {
-		return books.filter( book => shelf.toLowerCase().replace(/\s/g,'') === book.shelf.toLowerCase() )
+		return books.filter( book => shelf.value === book.shelf )
 	}
 	return (
 		<div className='list-books-content'>
 			{shelves.map((shelf, i) => (
-				<Shelf key={i} name={shelf} books={filterBooks(shelf, books)} />
+				shelf.value !== 'none' && <Shelf key={i} name={shelf.name} books={filterBooks(shelf, books)} shelves={shelves} />
 			))}
 		</div>
 	)
