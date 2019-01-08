@@ -6,16 +6,16 @@ import SearchBooks from './SearchBooks'
 import ShelfList from './ShelfList'
 
 class BooksApp extends React.Component {
-  state = {
+	state = {
 		books: [],
 		shelves: [
 			{ name: 'Currently Reading', value: 'currentlyReading' },
 			{ name: 'Want to Read', value: 'wantToRead' },
 			{ name: 'Read', value: 'read' },
-			{ name: 'None', value: 'none'},
 		],
-  }
-	getBooks = () => {
+	}
+
+	getBooksFromAPI = () => {
 		BooksAPI.getAll()
 		.then((books) => {
 			this.setState(() => ({
@@ -24,6 +24,8 @@ class BooksApp extends React.Component {
 		})
 	}
 
+	/* Altera a prateleira utilizando a ID do livro selecionado para iterar
+	 * pelo array this.state.books*/
 	changeShelf = (selectedBook, newShelf) => {
 		this.setState((prevState) => ({
 			books: prevState.books.map( book => book.id === selectedBook.id 
@@ -34,30 +36,42 @@ class BooksApp extends React.Component {
 	}
 
 	componentDidMount() {
-		this.getBooks()
+		this.getBooksFromAPI()
 	}
 
-  render() {
+	render() {
 		const { books, shelves } = this.state
-    return (
-      <div className='app'>
+		return (
+			<div className='app'>
+				{/* Página inicial do app */}
 				<Route exact path='/' render={() => (
 					<div className='list-books'>
 						<div className='list-books-title'>
 							<h1>MyReads</h1>
 						</div>
-						<ShelfList books={books} shelves={shelves} onShelfChange={this.changeShelf}/>
+						<ShelfList
+							books={books}
+							shelves={shelves}
+							onShelfChange={this.changeShelf}
+						/>
 						<div className="open-search">
 							<Link
 								to='/search'
-							><button>Add a book</button></Link>
+							><button>Search Books</button></Link>
 						</div>
 					</div>
 				)} />
-				<Route path='/search' render={() => (<SearchBooks books={books} shelves={shelves} onShelfChange={this.changeShelf} />)}/>
-      </div>
-    )
-  }
+				{/* Página de buscas */}
+				<Route path='/search' render={() => (
+					<SearchBooks
+						books={books}
+						shelves={shelves}
+						onShelfChange={this.changeShelf}
+					/>
+				)} />
+			</div>
+		)
+	}
 }
 
 export default BooksApp

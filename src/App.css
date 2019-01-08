@@ -76,7 +76,6 @@ body, .app {
 /* search page */
 
 .search-books-bar {
-  position: fixed;
   width: 100%;
   top: 0;
   left: 0;
@@ -116,6 +115,18 @@ body, .app {
 button:active {
   border: red;
   outline: none;
+}
+
+.showing-books {
+  text-align: center;
+  margin: 20px 0;
+}
+.showing-books button {
+  color: #60ac5d;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: inherit;
 }
 
 .search-books-results {
