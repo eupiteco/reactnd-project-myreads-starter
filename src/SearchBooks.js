@@ -1,10 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import BooksGrid from './BooksGrid'
+import * as BooksAPI from './BooksAPI'
 
 class SearchBooks extends React.Component {
 	state = {
-		searchQueryValue: ""
+		searchQueryValue: "",
+		foundBooks: [],
 	}
 
 	updateSearchQuery = (query) => {
@@ -23,14 +25,29 @@ class SearchBooks extends React.Component {
 		)
 		return filteredBooks
 	}
-	clearQuery = () => this.updateSearchQuery('')
+
+	searchBooks(searchQuery) {
+		if (searchQuery !== "") {
+			BooksAPI.search(searchQuery)
+			.then((books) => {
+				this.setState(() => ({
+					foundBooks: books
+				}))
+			})
+		}
+	}
+
+	clearQuery = () => this.updateSearchQuery("")
+	
+	componentDidMount(){
+		this.searchBooks(this.state.searchQueryValue)
+		console.log(this.state.foundBooks)
+	}
 
 	render() {
-		const { books, shelves, onShelfChange } = this.props
-		const { searchQueryValue } = this.state
-		const showingBooks = searchQueryValue === ''
-			? []
-			: this.filterBooks(books, searchQueryValue)
+		const { shelves, onShelfChange } = this.props
+		const { searchQueryValue, foundBooks} = this.state
+		console.log(foundBooks)
 
 		return(
 			<div className="search-books">
@@ -50,9 +67,9 @@ class SearchBooks extends React.Component {
 				{ searchQueryValue !== '' && (
 					<div className='showing-books'>
 						<span>
-							{showingBooks.length === 0 
+							{foundBooks.length === 0 
 								? "No books found 🙁"
-								: `Showing ${showingBooks.length} of ${books.length} books`}
+								: null }
 						</span>
 						<button onClick={this.clearQuery}>Clear Search</button>
 					</div>
@@ -60,7 +77,7 @@ class SearchBooks extends React.Component {
 				<div className="search-books-results">
 					<ol className="books-grid"></ol>
 				</div>
-				<BooksGrid books={showingBooks} shelves={shelves} onShelfChange={onShelfChange} />
+				<BooksGrid books={foundBooks} shelves={shelves} onShelfChange={onShelfChange} />
 			</div>
 		)
 	}
