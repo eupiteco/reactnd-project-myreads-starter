@@ -9,7 +9,11 @@ const Book = ({ book, shelves, onShelfChange}) => {
 					style={{
 						width: 128,
 						height: 193,
-						backgroundImage: `url(${book.imageLinks.thumbnail})`
+						backgroundImage: `url(${
+							book.imageLinks
+								? book.imageLinks.thumbnail
+								: null
+						})`
 					}}
 				></div>
 				<ShelfPicker
@@ -20,12 +24,14 @@ const Book = ({ book, shelves, onShelfChange}) => {
 			</div>
 			<div className='book-title'>{book.title}</div>
 			<div className='book-authors'>
-				{book.authors.map( (author,i) => 
-					<div key={i}>{author}</div>
-				 )}
+				{ book.authors
+					? ( book.authors.map( (author,i) => 
+							<div key={i}>{author}</div>
+						)
+					) : null }
 			</div>
 		</div>
-	)
+	);
 }
 
-export default Book
+export default Book;

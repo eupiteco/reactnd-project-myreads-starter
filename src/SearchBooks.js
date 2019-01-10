@@ -9,45 +9,70 @@ class SearchBooks extends React.Component {
 		foundBooks: [],
 	}
 
-	updateSearchQuery = (query) => {
-		this.setState(() => ({
-			searchQueryValue: query
-		}))
+	isComponentMounted = false;
+
+	updateComponentState = (query) => {
+		this.updateSearchQuery(query);
+		this.searchBooks(query);
 	}
 
-	filterBooks(books, filterQuery) {
-		let filteredBooks = books
-		filterQuery.trim().split(' ').forEach(word => 
-			filteredBooks = filteredBooks.filter(book =>
-				book.title.toLowerCase().includes(word.toLowerCase()) ||
-				book.authors.toString().toLowerCase().includes(word.toLowerCase())
-			)
-		)
-		return filteredBooks
+	updateSearchQuery = (query) => {
+		this.setState(() => ({
+			searchQueryValue: query,
+		}));
 	}
 
 	searchBooks(searchQuery) {
 		if (searchQuery !== "") {
 			BooksAPI.search(searchQuery)
 			.then((books) => {
-				this.setState(() => ({
-					foundBooks: books
-				}))
-			})
+				console.log(this.isComponentMounted);
+				if(this.isComponentMounted){
+					console.log('vai trocar o estado');
+					this.setState(() => ({
+						foundBooks: books
+					}));
+					console.log('trocou o estado');
+				}
+			});
 		}
+	}
+
+	filterBooks(books, filterQuery) {
+		let filteredBooks = books;
+		let authors;
+		filterQuery.trim().split(' ').forEach(word => 
+			filteredBooks = filteredBooks.filter(book => {
+				// chave authors pode não existir
+				authors = book.authors ? book.authors : [];
+				return (
+					book.title.toLowerCase().includes(word.toLowerCase()) ||
+					authors.toString().toLowerCase().includes(word.toLowerCase())
+				)
+			})
+		);
+		return filteredBooks
 	}
 
 	clearQuery = () => this.updateSearchQuery("")
 	
 	componentDidMount(){
-		this.searchBooks(this.state.searchQueryValue)
-		console.log(this.state.foundBooks)
+		console.log('montou')
+		this.isComponentMounted = true;
+	}
+
+	componentWillUnmount(){
+		console.log('vai desmontar')
+		this.isComponentMounted = false;
 	}
 
 	render() {
 		const { shelves, onShelfChange } = this.props
 		const { searchQueryValue, foundBooks} = this.state
-		console.log(foundBooks)
+		const showingBooks = searchQueryValue === "" || foundBooks.error
+		? []
+		: foundBooks //this.filterBooks(foundBooks, searchQueryValue)
+		 console.log(foundBooks, showingBooks)
 
 		return(
 			<div className="search-books">
@@ -60,14 +85,14 @@ class SearchBooks extends React.Component {
 							type="text"
 							placeholder="Search by title or author"
 							value={searchQueryValue}
-							onChange={(e) => this.updateSearchQuery(e.target.value)}
+							onChange={(e) => this.updateComponentState(e.target.value)}
 						/>
 					</div>
 				</div>
 				{ searchQueryValue !== '' && (
 					<div className='showing-books'>
 						<span>
-							{foundBooks.length === 0 
+							{showingBooks.length === 0 
 								? "No books found 🙁"
 								: null }
 						</span>
@@ -77,7 +102,7 @@ class SearchBooks extends React.Component {
 				<div className="search-books-results">
 					<ol className="books-grid"></ol>
 				</div>
-				<BooksGrid books={foundBooks} shelves={shelves} onShelfChange={onShelfChange} />
+				<BooksGrid books={this.filterBooks(showingBooks, searchQueryValue)} shelves={shelves} onShelfChange={onShelfChange} />
 			</div>
 		)
 	}
