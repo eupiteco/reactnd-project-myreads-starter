@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import BooksGrid from './BooksGrid'
 import * as BooksAPI from './BooksAPI'
+import PropTypes from 'prop-types'
 
 class SearchBooks extends React.Component {
 	state = {
@@ -9,6 +10,10 @@ class SearchBooks extends React.Component {
 		foundBooks: [],
 	}
 
+	static propTypes = {
+		shelves: PropTypes.array.isRequired,
+		onShelfChange: PropTypes.func.isRequired
+	}
 	isComponentMounted = false;
 
 	updateComponentState = (query) => {

@@ -6,7 +6,6 @@ Of course, you are free to start this project from scratch if you wish! Just be 
 
 ## TODO list
 * Sincar prateleiras com busca no seletor
-* PropTypees em tudo
 * Guia de estilo JS
 * *opcional*: página do livro com mais infos, thumbs e seletor de prateleira
 

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const ShelfPicker = ({ book, onShelfChange, shelves }) => {
 	const shelfList = shelves.map( (shelf, i) => {
@@ -20,5 +21,12 @@ const ShelfPicker = ({ book, onShelfChange, shelves }) => {
 		</div>
 	)
 }
+
+ShelfPicker.propTypes = {
+	book: PropTypes.object.isRequired,
+	shelves: PropTypes.array.isRequired,
+	onShelfChange: PropTypes.func.isRequired
+}
+
 
 export default ShelfPicker

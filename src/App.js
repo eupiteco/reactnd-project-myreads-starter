@@ -64,7 +64,6 @@ class BooksApp extends React.Component {
 				{/* Página de buscas */}
 				<Route path='/search' render={() => (
 					<SearchBooks
-						books={books}
 						shelves={shelves}
 						onShelfChange={this.changeShelf}
 					/>
