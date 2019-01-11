@@ -6,8 +6,9 @@ Of course, you are free to start this project from scratch if you wish! Just be 
 
 ## TODO list
 * Sincar prateleiras com busca no seletor
-* Guia de estilo JS
+* Mostrar 'none' nos pickers da busca
 * *opcional*: página do livro com mais infos, thumbs e seletor de prateleira
+* *opcional*: termos da busca na URL sincada com o estado do app
 
 ## TL;DR
 

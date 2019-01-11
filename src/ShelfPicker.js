@@ -1,16 +1,16 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React from "react";
+import PropTypes from "prop-types";
 
 const ShelfPicker = ({ book, onShelfChange, shelves }) => {
 	const shelfList = shelves.map( (shelf, i) => {
-		const isSelected = shelf.value === book.shelf ? '✓ ' : ''
+		const isSelected = shelf.value === book.shelf ? "✓ " : "";
 		return(
 			<option
 				key={i}
 				value={shelf.value}
 			>{isSelected}{shelf.name}</option>
-		)
-	})
+		);
+	});
 
 	return(
 		<div className="book-shelf-changer">
@@ -19,14 +19,14 @@ const ShelfPicker = ({ book, onShelfChange, shelves }) => {
 				{shelfList}
 			</select>
 		</div>
-	)
-}
+	);
+};
 
 ShelfPicker.propTypes = {
 	book: PropTypes.object.isRequired,
 	shelves: PropTypes.array.isRequired,
 	onShelfChange: PropTypes.func.isRequired
-}
+};
 
 
-export default ShelfPicker
+export default ShelfPicker;

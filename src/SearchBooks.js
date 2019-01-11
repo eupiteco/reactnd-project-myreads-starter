@@ -1,19 +1,20 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import BooksGrid from './BooksGrid'
-import * as BooksAPI from './BooksAPI'
-import PropTypes from 'prop-types'
+import React from "react";
+import { Link } from "react-router-dom";
+import BooksGrid from "./BooksGrid";
+import * as BooksAPI from "./BooksAPI";
+import PropTypes from "prop-types";
 
 class SearchBooks extends React.Component {
 	state = {
 		searchQueryValue: "",
 		foundBooks: [],
-	}
+	};
 
 	static propTypes = {
 		shelves: PropTypes.array.isRequired,
 		onShelfChange: PropTypes.func.isRequired
-	}
+	};
+
 	isComponentMounted = false;
 
 	updateComponentState = (query) => {
@@ -33,11 +34,11 @@ class SearchBooks extends React.Component {
 			.then((books) => {
 				console.log(this.isComponentMounted);
 				if(this.isComponentMounted){
-					console.log('vai trocar o estado');
+					console.log("vai trocar o estado");
 					this.setState(() => ({
 						foundBooks: books
 					}));
-					console.log('trocou o estado');
+					console.log("trocou o estado");
 				}
 			});
 		}
@@ -46,7 +47,7 @@ class SearchBooks extends React.Component {
 	filterBooks(books, filterQuery) {
 		let filteredBooks = books;
 		let authors;
-		filterQuery.trim().split(' ').forEach(word => 
+		filterQuery.trim().split(" ").forEach(word => 
 			filteredBooks = filteredBooks.filter(book => {
 				// chave authors pode não existir
 				authors = book.authors ? book.authors : [];
@@ -59,30 +60,30 @@ class SearchBooks extends React.Component {
 		return filteredBooks
 	}
 
-	clearQuery = () => this.updateSearchQuery("")
+	clearQuery = () => this.updateSearchQuery("");
 	
 	componentDidMount(){
-		console.log('montou')
+		console.log("montou");
 		this.isComponentMounted = true;
 	}
 
 	componentWillUnmount(){
-		console.log('vai desmontar')
+		console.log("vai desmontar");
 		this.isComponentMounted = false;
 	}
 
 	render() {
-		const { shelves, onShelfChange } = this.props
-		const { searchQueryValue, foundBooks} = this.state
+		const { shelves, onShelfChange } = this.props;
+		const { searchQueryValue, foundBooks} = this.state;
 		const showingBooks = searchQueryValue === "" || foundBooks.error
 		? []
 		: foundBooks //this.filterBooks(foundBooks, searchQueryValue)
-		 console.log(foundBooks, showingBooks)
+		 console.log(foundBooks, showingBooks);
 
 		return(
 			<div className="search-books">
 				<div className="search-books-bar">
-					<Link to='/'>
+					<Link to="/">
 						<button className="close-search">Close</button>
 					</Link>
 					<div className="search-books-input-wrapper">
@@ -94,8 +95,8 @@ class SearchBooks extends React.Component {
 						/>
 					</div>
 				</div>
-				{ searchQueryValue !== '' && (
-					<div className='showing-books'>
+				{ searchQueryValue !== "" && (
+					<div className="showing-books">
 						<span>
 							{showingBooks.length === 0 
 								? "No books found 🙁"
@@ -107,10 +108,10 @@ class SearchBooks extends React.Component {
 				<div className="search-books-results">
 					<ol className="books-grid"></ol>
 				</div>
-				<BooksGrid books={this.filterBooks(showingBooks, searchQueryValue)} shelves={shelves} onShelfChange={onShelfChange} />
+				<BooksGrid books={showingBooks} shelves={shelves} onShelfChange={onShelfChange} />
 			</div>
-		)
+		);
 	}
 }
 
-export default SearchBooks
+export default SearchBooks;
