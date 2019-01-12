@@ -32,13 +32,10 @@ class SearchBooks extends React.Component {
 		if (searchQuery !== "") {
 			BooksAPI.search(searchQuery)
 			.then((books) => {
-				console.log(this.isComponentMounted);
 				if(this.isComponentMounted){
-					console.log("vai trocar o estado");
 					this.setState(() => ({
 						foundBooks: books
 					}));
-					console.log("trocou o estado");
 				}
 			});
 		}
@@ -63,12 +60,10 @@ class SearchBooks extends React.Component {
 	clearQuery = () => this.updateSearchQuery("");
 	
 	componentDidMount(){
-		console.log("montou");
 		this.isComponentMounted = true;
 	}
 
 	componentWillUnmount(){
-		console.log("vai desmontar");
 		this.isComponentMounted = false;
 	}
 
@@ -77,8 +72,7 @@ class SearchBooks extends React.Component {
 		const { searchQueryValue, foundBooks} = this.state;
 		const showingBooks = searchQueryValue === "" || foundBooks.error
 		? []
-		: foundBooks //this.filterBooks(foundBooks, searchQueryValue)
-		 console.log(foundBooks, showingBooks);
+		: foundBooks
 
 		return(
 			<div className="search-books">

@@ -3,7 +3,11 @@ import PropTypes from "prop-types";
 
 const ShelfPicker = ({ book, onShelfChange, shelves }) => {
 	const shelfList = shelves.map( (shelf, i) => {
-		const isSelected = shelf.value === book.shelf ? "✓ " : "";
+		const isSelected = !book.shelf && shelf.value === "none"
+			? "✓ "
+			: book.shelf === shelf.value
+				? "✓ "
+				: "";
 		return(
 			<option
 				key={i}

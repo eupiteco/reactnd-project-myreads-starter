@@ -12,6 +12,7 @@ class BooksApp extends React.Component {
 			{ name: "Currently Reading", value: "currentlyReading" },
 			{ name: "Want to Read", value: "wantToRead" },
 			{ name: "Read", value: "read" },
+			{ name: "None", value: "none" },
 		],
 	};
 
@@ -26,17 +27,46 @@ class BooksApp extends React.Component {
 
 	/* Altera a prateleira utilizando a ID do livro selecionado para iterar
 	 * pelo array this.state.books*/
-	changeShelf = (selectedBook, newShelf) => {
-		this.setState((prevState) => ({
-			books: prevState.books.map( book => book.id === selectedBook.id 
-				? ({...book, shelf: newShelf})
-				: book)
-		}));
+	updateShelf = (selectedBook, newShelf) => {
+		console.log(this.isBookIntoCollection(selectedBook, this.state.books));
+		this.isBookIntoCollection(selectedBook, this.state.books)
+		? this.changeShelf(selectedBook, newShelf)
+		: this.putBookIntoShelf(selectedBook, newShelf)
 		BooksAPI.update(selectedBook, newShelf);
+	}
+
+	/* Verifica se o livro está em uma prateleira para definir se ele será
+	 * ou não adicionado ao this.state.books */
+	isBookIntoCollection = (selectedBook, bookCollection) => {
+		let answer = false;
+		bookCollection.forEach(book => {
+			if(book.id === selectedBook.id) answer = true;
+			console.log(answer); //???????????????????????
+		});
+		return answer;
+	}
+	
+	putBookIntoShelf = (book, selectedShelf) => {
+		console.log('put');
+		this.setState((prevState) => ({
+			books: prevState.books.push({...book, shelf: selectedShelf}),
+		}))
+	}
+	changeShelf = (selectedBook, selectedShelf) => {
+		console.log('change');
+		this.setState((prevState) => ({
+			books: prevState.books.map( book => book.id === selectedBook.id
+				? ({...book, shelf: selectedShelf})
+				: book),
+		}))
 	}
 
 	componentDidMount() {
 		this.getBooksFromAPI();
+	}
+	componentWillUpdate(){
+	}
+	componentDidUpdate(){
 	}
 
 	render() {
@@ -52,7 +82,7 @@ class BooksApp extends React.Component {
 						<ShelfList
 							books={books}
 							shelves={shelves}
-							onShelfChange={this.changeShelf}
+							onShelfChange={this.updateShelf}
 						/>
 						<div className="open-search">
 							<Link
