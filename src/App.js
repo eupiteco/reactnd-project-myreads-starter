@@ -7,6 +7,12 @@ import ShelfList from "./ShelfList";
 
 class BooksApp extends React.Component {
 	state = {
+		test: [
+			{ name: "Currently Reading", value: "currentlyReading", books: [] },
+			{ name: "Want to Read", value: "wantToRead", books: [] },
+			{ name: "Read", value: "read", books: [] },
+			{ name: "None", value: "none" },
+		],
 		books: [],
 		shelves: [
 			{ name: "Currently Reading", value: "currentlyReading" },
@@ -18,9 +24,14 @@ class BooksApp extends React.Component {
 
 	getBooksFromAPI = () => {
 		BooksAPI.getAll()
-		.then((books) => {
-			this.setState(() => ({
-				books
+		.then((APIbooks) => {
+			this.setState((prevState) => ({
+				books: APIbooks,
+				test: prevState.test.map(shelf => ({
+					...shelf, books: APIbooks.filter(book => {
+						return book.shelf === shelf.value
+					})
+				})),
 			}));
 		})
 	}
@@ -70,7 +81,7 @@ class BooksApp extends React.Component {
 	}
 
 	render() {
-		const { books, shelves } = this.state
+		const { books, shelves } = this.state;
 		return (
 			<div className="app">
 				{/* Página inicial do app */}
