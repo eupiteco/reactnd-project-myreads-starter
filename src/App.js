@@ -7,17 +7,10 @@ import ShelfList from "./ShelfList";
 
 class BooksApp extends React.Component {
 	state = {
-		test: [
+		shelves: [
 			{ name: "Currently Reading", value: "currentlyReading", books: [] },
 			{ name: "Want to Read", value: "wantToRead", books: [] },
 			{ name: "Read", value: "read", books: [] },
-			{ name: "None", value: "none" },
-		],
-		books: [],
-		shelves: [
-			{ name: "Currently Reading", value: "currentlyReading" },
-			{ name: "Want to Read", value: "wantToRead" },
-			{ name: "Read", value: "read" },
 			{ name: "None", value: "none" },
 		],
 	};
@@ -26,8 +19,7 @@ class BooksApp extends React.Component {
 		BooksAPI.getAll()
 		.then((APIbooks) => {
 			this.setState((prevState) => ({
-				books: APIbooks,
-				test: prevState.test.map(shelf => ({
+				shelves: prevState.shelves.map(shelf => ({
 					...shelf, books: APIbooks.filter(book => {
 						return book.shelf === shelf.value
 					})
@@ -39,8 +31,7 @@ class BooksApp extends React.Component {
 	/* Altera a prateleira utilizando a ID do livro selecionado para iterar
 	 * pelo array this.state.books*/
 	updateShelf = (selectedBook, newShelf) => {
-		console.log(this.isBookIntoCollection(selectedBook, this.state.books));
-		this.isBookIntoCollection(selectedBook, this.state.books)
+		this.isBookIntoCollection(selectedBook, this.state.shelves)
 		? this.changeShelf(selectedBook, newShelf)
 		: this.putBookIntoShelf(selectedBook, newShelf)
 		BooksAPI.update(selectedBook, newShelf);
@@ -48,27 +39,30 @@ class BooksApp extends React.Component {
 
 	/* Verifica se o livro está em uma prateleira para definir se ele será
 	 * ou não adicionado ao this.state.books */
-	isBookIntoCollection = (selectedBook, bookCollection) => {
+	isBookIntoCollection = (selectedBook, bookShelves) => {
 		let answer = false;
-		bookCollection.forEach(book => {
-			if(book.id === selectedBook.id) answer = true;
-			console.log(answer); //???????????????????????
+		bookShelves.forEach(shelf => {
+			shelf.books.forEach( book => {
+				if(book.id === selectedBook.id) answer = true;
+			});
 		});
 		return answer;
 	}
 	
 	putBookIntoShelf = (book, selectedShelf) => {
-		console.log('put');
 		this.setState((prevState) => ({
-			books: prevState.books.push({...book, shelf: selectedShelf}),
+			shelves: prevState.shelves.map( shelf =>
+				shelf.value === selectedShelf
+				? ({...shelf, books: shelf.books.push({...book, shelf: selectedShelf})})
+				: shelf),
 		}))
 	}
 	changeShelf = (selectedBook, selectedShelf) => {
-		console.log('change');
 		this.setState((prevState) => ({
-			books: prevState.books.map( book => book.id === selectedBook.id
-				? ({...book, shelf: selectedShelf})
-				: book),
+			shelves: prevState.shelves.forEach(shelf => 
+				shelf.value === selectedShelf
+				? ({...shelf, books: shelf.books.push({...selectedBook, shelf: selectedShelf})})
+				: shelf.books.filter( book => book.id === selectedBook.id)),
 		}))
 	}
 
@@ -81,7 +75,7 @@ class BooksApp extends React.Component {
 	}
 
 	render() {
-		const { books, shelves } = this.state;
+		const { shelves } = this.state;
 		return (
 			<div className="app">
 				{/* Página inicial do app */}
@@ -91,7 +85,6 @@ class BooksApp extends React.Component {
 							<h1>MyReads</h1>
 						</div>
 						<ShelfList
-							books={books}
 							shelves={shelves}
 							onShelfChange={this.updateShelf}
 						/>
@@ -106,7 +99,7 @@ class BooksApp extends React.Component {
 				<Route path="/search" render={() => (
 					<SearchBooks
 						shelves={shelves}
-						onShelfChange={this.changeShelf}
+						onShelfChange={this.updateShelf}
 					/>
 				)} />
 			</div>
