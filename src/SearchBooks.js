@@ -17,9 +17,14 @@ class SearchBooks extends React.Component {
 
 	isComponentMounted = false;
 
+	getBooksFromShelves = () => {
+		let list = [];
+		this.props.shelves.forEach( shelf => list = list.concat(shelf.books));
+		return list;
+	}
 	updateComponentState = (query) => {
 		this.updateSearchQuery(query);
-		this.searchBooks(query);
+		this.searchBooks(query, this.getBooksFromShelves());
 	}
 
 	updateSearchQuery = (query) => {
@@ -28,33 +33,25 @@ class SearchBooks extends React.Component {
 		}));
 	}
 
-	searchBooks(searchQuery) {
+	searchBooks(searchQuery, shelfBooks) {
 		if (searchQuery !== "") {
 			BooksAPI.search(searchQuery)
 			.then((books) => {
 				if(this.isComponentMounted){
+					books = books.map( book => {
+						shelfBooks.forEach( shelfBook => {
+							if (book.id === shelfBook.id) {
+								book = {...book, shelf: shelfBook.shelf};
+							}
+						});
+						return book;
+					});
 					this.setState(() => ({
 						foundBooks: books
 					}));
 				}
 			});
 		}
-	}
-
-	filterBooks(books, filterQuery) {
-		let filteredBooks = books;
-		let authors;
-		filterQuery.trim().split(" ").forEach(word => 
-			filteredBooks = filteredBooks.filter(book => {
-				// chave authors pode não existir
-				authors = book.authors ? book.authors : [];
-				return (
-					book.title.toLowerCase().includes(word.toLowerCase()) ||
-					authors.toString().toLowerCase().includes(word.toLowerCase())
-				)
-			})
-		);
-		return filteredBooks
 	}
 
 	clearQuery = () => this.updateSearchQuery("");

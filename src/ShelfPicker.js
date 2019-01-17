@@ -2,10 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const ShelfPicker = ({ book, onShelfChange, shelves }) => {
-	const shelfList = shelves.map( (shelf, i) => {
-		const isSelected = !book.shelf && shelf.value === "none"
+	const noShelf = { name: "None", value: "none" }
+	const allShelves = [...shelves, noShelf]
+	const shelfList = allShelves.map( (shelf, i) => {
+		const isSelected = book.shelf === shelf.value
 			? "✓ "
-			: book.shelf === shelf.value
+			: !book.shelf && shelf.value === "none"
 				? "✓ "
 				: "";
 		return(

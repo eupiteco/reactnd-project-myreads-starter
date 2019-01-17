@@ -30,43 +30,24 @@ class BooksApp extends React.Component {
 	/* Altera a prateleira utilizando a ID do livro selecionado para iterar
 	 * pelo array this.state.books*/
 	updateShelf = (selectedBook, newShelf) => {
-		this.isBookIntoCollection(selectedBook, this.state.shelves)
-		? this.changeShelf(selectedBook, newShelf)
-		: this.putBookIntoShelf(selectedBook, newShelf)
+		this.changeShelf(selectedBook, newShelf);
 		BooksAPI.update(selectedBook, newShelf);
 	}
 
-	/* Verifica se o livro está em uma prateleira para definir se ele será
-	 * ou não adicionado ao this.state.books */
-	isBookIntoCollection = (selectedBook, bookShelves) => {
-		let answer = false;
-		bookShelves.forEach(shelf => {
-			shelf.books.forEach( book => {
-				if(book.id === selectedBook.id) answer = true;
-			});
-		});
-		return answer;
-	}
-	
-	putBookIntoShelf = (book, selectedShelf) => {
-		console.log('putBook',book,selectedShelf)
-		this.setState((prevState) => ({
-			shelves: prevState.shelves.map( shelf =>
-				shelf.value === selectedShelf
-				? {...shelf, books: shelf.books.push({...book, shelf: selectedShelf})}
-				: shelf),
-		}))
-	}
 	changeShelf = (selectedBook, selectedShelf) => {
-		this.setState((prevState) => ({
-			shelves: prevState.shelves.forEach(shelf =>
-				shelf.value === selectedShelf
-				? ({...shelf, books: shelf.books.push({...selectedBook, shelf: selectedShelf})})
-				:	(selectedBook.shelf === shelf.value
-					? ( shelf.books.filter( book => book.id !== selectedBook.id))
-					: ( shelf )
-				)
-			),
+		return this.setState(prevState => ({
+			shelves: [
+				...prevState.shelves.map(shelf => {
+					if (shelf.value === selectedShelf) {
+						selectedBook.shelf = selectedShelf
+						shelf.books = [...shelf.books, selectedBook];
+					}
+					if (shelf.value !== selectedShelf) {
+						shelf.books = shelf.books.filter(book => selectedBook.id !== book.id);
+					}
+					return shelf;
+				}),
+			]
 		}))
 	}
 
@@ -78,18 +59,12 @@ class BooksApp extends React.Component {
 		this.getBooksFromAPI();
 	}
 	componentWillUpdate(nextState){
-		console.log('wup')
-		this.showBooks();
 	}
 	componentDidUpdate(){
-		console.log('dup')
-		this.showBooks();
 	}
 
 	render() {
 		const { shelves } = this.state;
-		console.log('render');
-		this.showBooks();
 		return (
 			<div className="app">
 				{/* Página inicial do app */}
