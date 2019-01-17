@@ -11,7 +11,6 @@ class BooksApp extends React.Component {
 			{ name: "Currently Reading", value: "currentlyReading", books: [] },
 			{ name: "Want to Read", value: "wantToRead", books: [] },
 			{ name: "Read", value: "read", books: [] },
-			{ name: "None", value: "none" },
 		],
 	};
 
@@ -50,32 +49,47 @@ class BooksApp extends React.Component {
 	}
 	
 	putBookIntoShelf = (book, selectedShelf) => {
+		console.log('putBook',book,selectedShelf)
 		this.setState((prevState) => ({
 			shelves: prevState.shelves.map( shelf =>
 				shelf.value === selectedShelf
-				? ({...shelf, books: shelf.books.push({...book, shelf: selectedShelf})})
+				? {...shelf, books: shelf.books.push({...book, shelf: selectedShelf})}
 				: shelf),
 		}))
 	}
 	changeShelf = (selectedBook, selectedShelf) => {
 		this.setState((prevState) => ({
-			shelves: prevState.shelves.forEach(shelf => 
+			shelves: prevState.shelves.forEach(shelf =>
 				shelf.value === selectedShelf
 				? ({...shelf, books: shelf.books.push({...selectedBook, shelf: selectedShelf})})
-				: shelf.books.filter( book => book.id === selectedBook.id)),
+				:	(selectedBook.shelf === shelf.value
+					? ( shelf.books.filter( book => book.id !== selectedBook.id))
+					: ( shelf )
+				)
+			),
 		}))
 	}
 
+	//testing method to see what is inside of each shelf
+	showBooks = () => {
+		this.state.shelves.forEach( shelf => console.log(shelf.books));
+	}
 	componentDidMount() {
 		this.getBooksFromAPI();
 	}
-	componentWillUpdate(){
+	componentWillUpdate(nextState){
+		console.log('wup')
+		this.showBooks();
 	}
 	componentDidUpdate(){
+		console.log('dup')
+		this.showBooks();
 	}
 
 	render() {
 		const { shelves } = this.state;
+		console.log('render');
+		this.showBooks();
 		return (
 			<div className="app">
 				{/* Página inicial do app */}

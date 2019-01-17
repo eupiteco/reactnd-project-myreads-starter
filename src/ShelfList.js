@@ -18,7 +18,6 @@ const ShelfList = ({ shelves, onShelfChange}) => (
 );
 
 ShelfList.propTypes = {
-	books: PropTypes.array.isRequired,
 	shelves: PropTypes.array.isRequired,
 	onShelfChange: PropTypes.func.isRequired
 };
